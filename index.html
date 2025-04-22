@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Task Manager</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="shortcut icon" href="nexus_logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="layout-container">
+    <div class="main-panel">
+      <div class="controls">
+        <button onclick="showModal('task')">New Task</button>
+        <div class="dropdown" style="position: relative;">
+          <button onclick="toggleDropdown()" class="button">
+            Manage <i class="fa fa-caret-down"></i>
+          </button>
+          <div id="manageDropdown" class="dropdown-content">
+            <button onclick="showModal('subject')" class="dropdown-btn">Subjects</button>
+            <button onclick="showModal('type')" class="dropdown-btn">Types</button>
+            <button onclick="exportTasks()" class="dropdown-btn">Export</button>
+            <label class="dropdown-btn" style="margin: 0; display: block; cursor: pointer;">
+              Import
+              <input type="file" accept=".json" onchange="importTasks(event)" style="display: none;" />
+            </label>
+          </div>
+        </div>
+        <button onclick="showModal('calendar')">Calendar View</button>
+        <button onclick="renderTasks()">Sort by Due Date</button>
+
+
+        <input id="taskSearch" type="text" placeholder="Search..." oninput="filterTasks()"
+          style="padding: 10px; border-radius: 6px; flex: 1; max-width: 300px" />
+        <div class="styled-select">
+          <select id="priorityFilter" onchange="filterTasks()">
+            <option value="">All Priorities</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <i class="fa fa-caret-down"></i>
+        </div>
+        <input type="color" id="accentPicker" title="Accent Color" style="width: 36px; height: 36px; border-radius: 6px;" />
+
+      </div>
+      <div class="counters">
+        <div class="counter-card">
+          <i class="fa fa-list"></i>
+          Total: <span id="totalCounter">0</span>
+        </div>
+        <div class="counter-card">
+          <i class="fa fa-check-circle"></i>
+          Completed: <span id="completedCounter">0</span>
+        </div>
+        <div class="counter-card">
+          <i class="fa fa-clock"></i>
+          Pending: <span id="pendingCounter">0</span>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Due Date</th>
+            <th>Type</th>
+            <th>Details</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="taskBody"></tbody>
+      </table>
+    </div>
+    <div class="side-panel-wrapper">
+      <div class="side-panel" id="sidePanel">
+        <h3>Upcoming</h3>
+        <div id="upcomingTasks"></div>
+        <h3>Urgent</h3>
+        <div id="urgentTasks"></div>
+      </div>
+      <button id="toggleSidePanel" class="toggle-panel-btn" onclick="toggleSidePanel()">
+        <i class="fa fa-chevron-right"></i>
+      </button>
+    </div>
+    </dive>
+    <div class="modal-overlay" id="modalOverlay" onclick="hideModals()"></div>
+    <div id="taskModal" class="modal">
+      <h2 id="modalTitle">New Task</h2>
+      <div class="form-group">
+        <label>Subject:</label><select id="taskSubject"></select>
+      </div>
+      <div class="form-group">
+        <label>Due Date:</label><input type="date" id="taskDueDate" />
+      </div>
+      <div class="form-group">
+        <label>Type:</label><select id="taskType"></select>
+      </div>
+      <div class="form-group">
+        <label>Priority:</label>
+        <select id="taskPriority">
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Details:</label><textarea id="taskDetails"></textarea>
+      </div>
+      <input type="hidden" id="taskId" />
+      <button onclick="saveTask()">Save</button>
+    </div>
+    <div id="subjectModal" class="modal">
+      <h2>Manage Subjects</h2>
+      <div id="subjectsList"></div>
+      <div class="form-group">
+        <input type="text" id="newSubject" placeholder="New subject" />
+        <input type="color" id="subjectColor" style="height: 50px; cursor: pointer; margin: 10px 0 10px" />
+        <button onclick="addSubject()">Add</button>
+      </div>
+    </div>
+    <div id="typeModal" class="modal">
+      <h2>Manage Types</h2>
+      <div id="typesList"></div>
+      <div class="form-group">
+        <input type="text" id="newType" placeholder="New type" />
+        <input type="color" id="typeColor" style="height: 50px; cursor: pointer; margin: 10px 0 10px" />
+        <button onclick="addType()">Add</button>
+      </div>
+    </div>
+    <div id="calendarModal" class="modal">
+      <h2>Calendar View</h2>
+      <div class="calendar-controls">
+        <button onclick="changeMonth(-1)">&lt;</button>
+        <h3 id="currentMonth"></h3>
+        <button onclick="changeMonth(1)">&gt;</button>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <div class="toast" id="undoToast" style="background: #222"></div>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
